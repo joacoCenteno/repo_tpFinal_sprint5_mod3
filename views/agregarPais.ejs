@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <form action="/pais/insertar" method="post" class="flex flex-col py-5 px-5 w-100 m-auto mb-9">
+        <h2 class="text-center text-2xl font-bold text-green-400 pb-2">Formulario Ingreso</h2>
+        <label for="nombrePais" class="text-sm">Nombre Pais</label>
+        <input type="text" id="nombrePais" name="nombrePais" value="<%= pais.nombrePais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'nombrePais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Capital Pais (En caso de existir mas de una capital, separarlas por ",")</label>
+        <input type="text" name="capitalPais" value="<%= pais.capitalPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path.startsWith('capitalPais')).forEach(e => { %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Fronteras del Pais (En caso de existir mas de una frontera, separarlas por ",")</label>
+        <input type="text" name="fronteraPais" value="<%= pais.fronteraPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300">  <br>
+        <% errors.filter(e => e.path.startsWith('fronteraPais')).forEach(e => { %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Area del Pais</label>
+        <input type="number" name="areaPais" value="<%= pais.areaPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'areaPais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Poblaccion del Pais</label>
+        <input type="number" name="poblacionPais" value="<%= pais.poblacionPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'poblacionPais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Indice GINI Pais</label>
+        <input type="number" name="desigualdadPais" value="<%= pais.desigualdadPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'desigualdadPais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Zona Horaria Pais (En caso de existir mas de una zona horaria, separarlas por ",")</label>
+        <input type="text" name="zonaHorariaPais" value="<%= pais.zonaHorariaPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'zonaHorariaPais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        <label for="" class="text-sm mt-2">Codigo Bandera Pais</label>
+        <input type="text" name="banderaPais" value="<%= pais.banderaPais || ''%>" class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
+        <% errors.filter(e => e.path === 'banderaPais').forEach(e=>{ %>
+            <span class="text-xs text-red-400"><%= e.msg %></span> <br>
+        <% }) %>
+        
+        <div class=" flex justify-end gap-5 mt-3">
+            <a href="/" class="text-white bg-sky-400 py-1 px-4 rounded-xs flex">Volver</a>
+            <button type="submit" class="text-white bg-green-400 py-1 px-4 rounded-xs cursor-pointer">Crear</button>
+        </div>
+
+    </form>
+</body>
+
+<style>
+    form{
+        box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    }
+</style>
+</html>
