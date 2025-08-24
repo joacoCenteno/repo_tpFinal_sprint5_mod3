@@ -1,5 +1,7 @@
 import CountryRepository from '../repositories/CountryRepository.mjs';
 
+//=== SE IMPLEMENTAN LAS FUNCIONES DEL OBJETO CountryRepository EXPORTADO POR EL ARCHIVO CountryRepository.mjs ===
+
 export async function obtenerTodosLosPaises(query){
     return await CountryRepository.obtenerTodos(query);
 }

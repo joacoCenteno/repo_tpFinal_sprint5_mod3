@@ -10,7 +10,7 @@
         <h2 class="text-center text-2xl font-bold text-green-400 pb-2">Formulario Edicion</h2>
         <label for="" class="text-sm mt-2">Nombre Pais</label>
         <input type="text" name="nombrePais" value="<%= pais.nombrePais%>"  class="w-80 mt-1 border border-green-100 text-sky-300"> <br>
-        <% errors.filter(e => e.path === 'nombrePais').forEach(e=>{ %>
+        <% errors.filter(e => e.path === 'nombrePais').forEach(e=>{ %> <!--PARA ESTA SECCION, SE FILTRAN TODOS LOS ERRORES CON PATH nombrePais PARA LUEGO MOSTRARLOS EN EL FORMULARIO-->
             <span class="text-xs text-red-400"><%= e.msg %></span> <br>
         <% }) %>
         <label for="" class="text-sm mt-2">Capital Pais (En caso de existir mas de una capital, separarlas por ",")</label>
