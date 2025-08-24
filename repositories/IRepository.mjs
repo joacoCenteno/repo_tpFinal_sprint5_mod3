@@ -1,6 +1,10 @@
 export default class IRepository{
-    obtenerTodos(){
+    obtenerTodos(query){
         throw new Error('Metodo obtenerTodoso() no implementado');
+    }
+
+    obtenerPaisesPaginado(pagina,limite,query){
+        throw new Error('Método obtenerPaisesPaginado() no implementado');
     }
 
     crearInstanciaModelo(body){

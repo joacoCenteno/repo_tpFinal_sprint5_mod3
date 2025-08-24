@@ -2,8 +2,12 @@ import Country from '../models/Country.mjs';
 import IRepository from './IRepository.mjs';
 
 class CountryRepository extends IRepository{
-    async obtenerTodos(){
-        return await Country.find({nombrePais: { $exists: true}, creador: 'JoaquinC'});
+    async obtenerTodos(query){
+        return await Country.find({$and: [query, {nombrePais: { $exists: true}}, {creador: 'JoaquinC'}]});
+    }
+
+    async obtenerPaisesPaginado(pagina,limite,query){
+        return await Country.find({$and: [query, {nombrePais: { $exists: true}}, {creador: 'JoaquinC'}]}).skip((pagina - 1) * limite).limit(limite);
     }
 
     crearInstanciaModelo(body){
