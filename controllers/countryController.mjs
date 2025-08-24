@@ -15,7 +15,7 @@ export async function obtenerTodosLosPaisesController(req,res){
         if(filterType==='nombre' && value1){ //Si el query param filterType es nombre y tenemos tambien value1
             query.nombrePais = {$regex:value1, $options:"i"} //Sumamos a la query el nombrePais segun el value1 que se haya ingresado
         }else if(filterType==='poblacion'){ //En caso de seleccionar la poblacion
-            if((req.query.value1 && isNaN(req.query.value1)) && (req.query.value2 && isNaN(req.query.value2))){ //Se verifica que se hayan ingresado solo numeros (caso constrario se ejecuta este if)
+            if((req.query.value1 && isNaN(req.query.value1)) || (req.query.value2 && isNaN(req.query.value2))){ //Se verifica que se hayan ingresado solo numeros (caso constrario se ejecuta este if)
                 return res.render('dashboard',{paises_formateados:[], pagina: 0, paginas_totales: 0, filtros: req.query, filtrosActivos: false, title: 'Listado de Paises', mensaje: 'NO HAY COINCIDENCIAS CON LA BÚSQUEDA :(', suma_area: [], suma_poblacion:[],promedio_gini:[]});
             }else{ //En caso de ingresar numeros
                 query.poblacionPais = {}; 
