@@ -20,8 +20,7 @@ Antes de ejecutar el proyecto, asegurate de tener instalado:
 1. **Clonar el repositorio**
 
    ```bash
-   git clone https://github.com/usuario/proyecto-paises.git
-   cd proyecto-paises
+   git clone https://github.com/joacoCenteno/repo_tpFinal_sprint5_mod3.git
 
 2. **Instalar dependencias**
    ```bash
