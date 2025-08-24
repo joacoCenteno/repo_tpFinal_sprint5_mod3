@@ -1,7 +1,11 @@
 import CountryRepository from '../repositories/CountryRepository.mjs';
 
-export async function obtenerTodosLosPaises(){
-    return await CountryRepository.obtenerTodos();
+export async function obtenerTodosLosPaises(query){
+    return await CountryRepository.obtenerTodos(query);
+}
+
+export async function obtenerPaisesPaginado(pagina,limite,query){
+    return await CountryRepository.obtenerPaisesPaginado(pagina,limite,query)
 }
 
 export function crearInstanciaModelo(body){
