@@ -1,13 +1,42 @@
-import {obtenerPaisId, obtenerTodosLosPaises, crearInstanciaModelo, actualizarPais, eliminarPais} from '../services/countryServices.mjs'
-import {renderizarPais, renderizarListaPaises} from '../views/responseView.mjs';
+import {obtenerPaisId, obtenerTodosLosPaises, crearInstanciaModelo, actualizarPais, eliminarPais, obtenerPaisesPaginado} from '../services/countryServices.mjs'
+import {renderizarListaPaises} from '../views/responseView.mjs';
 import {Parser} from 'json2csv';
 
 export async function obtenerTodosLosPaisesController(req,res){
     try{
-        const paises = await obtenerTodosLosPaises();
+        const pagina = parseInt(req.query.pagina) || 1;
+        if(pagina < 1) pagina = 1;
+        const limite = 5;
 
-        const paises_formateados = renderizarListaPaises(paises);
+        const { filterType, value1, value2} = req.query;
+        const query = {};
+
+        if(filterType==='nombre' && value1){
+            query.nombrePais = {$regex:value1, $options:"i"}
+        }else if(filterType==='poblacion'){
+            if((req.query.value1 && isNaN(req.query.value1)) && (req.query.value2 && isNaN(req.query.value2))){
+                return res.render('dashboard',{paises_formateados:[], pagina: 0, paginas_totales: 0, filtros: req.query, filtrosActivos: false, title: 'Listado de Paises', mensaje: 'NO HAY COINCIDENCIAS CON LA BÚSQUEDA :(', suma_area: [], suma_poblacion:[],promedio_gini:[]});
+            }else{
+                query.poblacionPais = {};
+                if(value1) query.poblacionPais.$gte = parseInt(value1);
+                if(value2) query.poblacionPais.$lte = parseInt(value2);                
+            }
+
+        }
+        const paises = await obtenerTodosLosPaises(query);
+
+        const total = paises.length;
+        const paginas_totales = Math.ceil(total/limite);
+
+        const pagina_actual = pagina > paginas_totales ? paginas_totales : pagina;
+        
+        
+
         //res.status(200).json(paises_formateados);
+    if(pagina_actual >=1){
+        const paises_paginado = await obtenerPaisesPaginado(pagina_actual,limite,query);
+        const paises_formateados = renderizarListaPaises(paises_paginado);
+        
         let suma_poblacion = 0;
         let suma_area = 0;
         let suma_gini = 0;
@@ -20,7 +49,17 @@ export async function obtenerTodosLosPaisesController(req,res){
 
         promedio_gini = (suma_gini / paises_formateados.length).toFixed(2);
 
-        res.render('dashboard',{paises_formateados, title: 'Listado de Paises', suma_poblacion, suma_area, promedio_gini, successUpdate: req.query.successUpdate, successCreate: req.query.successCreate, successDelete: req.query.successDelete});
+        const filtrosActivos = !!(
+            (filterType === "nombre" && value1) ||
+            (filterType === "poblacion" && (value1 || value2))
+        );
+
+        res.render('dashboard',{paises_formateados, pagina: pagina_actual, paginas_totales, filtros: req.query, filtrosActivos, title: 'Listado de Paises', mensaje: null, suma_poblacion, suma_area, promedio_gini, successUpdate: req.query.successUpdate, successCreate: req.query.successCreate, successDelete: req.query.successDelete});
+    }else{
+        res.render('dashboard',{paises_formateados:[], pagina: pagina_actual, paginas_totales, filtros: req.query, filtrosActivos: false, title: 'Listado de Paises', mensaje: 'NO HAY COINCIDENCIAS CON LA BÚSQUEDA :(', suma_area: [], suma_poblacion:[],promedio_gini:[]});
+    }
+        
+
     }catch(err){
         res.status(500).send({message: 'Error al obtener todos los paises', error: err.message});
     }
@@ -37,7 +76,7 @@ export async function insertarPaisController(req,res){
         const pais_guardado = await nuevo_pais.save();
 
         //res.status(200).json({message: 'Pais creado', pais: pais_guardado});
-        res.status(200).redirect('/paises?successCreate=1');
+        res.status(200).redirect('/paises?pagina=1&successCreate=1');
     }catch(err){
         res.status(500).send({message: 'Error al insertar pais', error: err.message});
     }
@@ -54,7 +93,7 @@ export async function actualizarPaisController(req,res){
         }
 
         //res.status(200).json({message: 'Pais actualizado con exito', pais: pais_actualizado});
-        res.status(200).redirect('/paises?successUpdate=1');
+        res.status(200).redirect('/paises?pagina=1&successUpdate=1');
     }catch(err){
         res.status(500).send({mensaje:'Error al actualizar el pais'});
     }
@@ -70,7 +109,7 @@ export async function eliminarPaisController(req,res){
         }
 
         //res.status(200).json({message: 'Pais eliminado', pais: pais_eliminado});
-        res.status(200).redirect('/paises/?successDelete=1');
+        res.status(200).redirect('/paises/?pagina=1&successDelete=1');
     }catch(err){
         res.status(500).send({message: 'Error al eliminar el pais'});
     }
@@ -96,7 +135,18 @@ export function renderizarAcercaDeController(req,res){
 
 export async function generarCsvController(req,res){
     try{
-    const paises = await obtenerTodosLosPaises();
+    const {filterType, value1, value2} = req.query;
+    const query = {};
+
+    if(filterType === "nombre" && value1){
+        query.nombrePais = { $regex: value1, $options: "i"};
+    }else if(filterType==="poblacion"){
+        query.poblacionPais = {};
+        if(value1) query.poblacionPais.$gte = parseInt(value1);
+        if(value2) query.poblacionPais.$lte = parseInt(value2);
+    }
+
+    const paises = await obtenerTodosLosPaises(query);
 
     const paises_formateados = renderizarListaPaises(paises);
     const paises_csv = paises_formateados.map(pais =>{
@@ -143,7 +193,7 @@ export async function generarCsvController(req,res){
         const csv = jsonCsvParser.parse(paises_csv);
 
         res.header('Content-Type','text/csv');
-        res.attachment('paises.csv');
+        res.attachment('paises_filtrados.csv');
         res.status(200).send(csv);      
     }catch(err){
         res.status(500).send({mensaje:'Error al generar el csv',error:err.message})
