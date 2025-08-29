@@ -48,10 +48,10 @@ export const registerValidationRules = () =>[
         .isFloat({min:0,max:100}).withMessage('El indice de desigualdad varia en un rango de 0-100'),
     body('areaPais')
         .exists().withMessage('El area del pais es requerido')
-        .isFloat({min:0}).withMessage('El area debe ser un valor positivo'),
+        .isFloat({min:1}).withMessage('El area debe ser un valor positivo'),
     body('poblacionPais')
         .exists().withMessage('La poblacion del pais es requerida')
-        .isInt({min:0}).withMessage('La poblacion debe ser un entero no negativo'),
+        .isInt({min:1}).withMessage('La poblacion debe ser un entero no negativo'),
     body('zonaHorariaPais')
         .trim()
         .customSanitizer(value =>{
